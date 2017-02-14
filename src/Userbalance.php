@@ -11,6 +11,7 @@ namespace Adteam\Core\Users\Balance;
 use Zend\ServiceManager\ServiceManager;
 use Doctrine\ORM\EntityManager;
 use Adteam\Core\Users\Balance\Entity\CoreOrderProducts;
+use Adteam\Core\Users\Balance\Entity\OauthUsers;
 
 /**
  * Description of Balance
@@ -46,10 +47,12 @@ class Userbalance {
         $this->em = $service->get(EntityManager::class); 
     }
     
-    public function getBalance($userId)
+    public function getBalance($username)
     {
+        $user = $this->em->getRepository(CoreOrderProducts::class)
+                ->getUser($username);
         $items = $this->em->getRepository(CoreOrderProducts::class)
-                ->getOrdersProducts($userId);
+                ->getOrdersProducts($user['id']);
         return ['expenseOverview'=>  $this->setEntities($items)];
     }    
     

@@ -14,6 +14,7 @@ namespace Adteam\Core\Users\Balance\Repository;
  */
 use Doctrine\ORM\EntityRepository;
 use Adteam\Core\Users\Balance\Entity\CoreProductsXCategories;
+use Adteam\Core\Users\Balance\Entity\OauthUsers;
 
 class CoreOrderProductsRepository extends EntityRepository
 {
@@ -39,5 +40,30 @@ class CoreOrderProductsRepository extends EntityRepository
             }
         );        
       
-    }        
+    }  
+    
+    /**
+     * 
+     * @param type $username
+     * @return type
+     * @throws \InvalidArgumentException
+     */
+    public function getUser($username)
+    {
+        try{
+            return $this->_em->getRepository(OauthUsers::class)
+                ->createQueryBuilder('T')
+                ->select('T.id,T.username')
+                ->where('T.username LIKE :username')
+                ->setParameter('username', $username)
+                ->andWhere('T.enabled = :enabled')
+                ->setParameter('enabled', 1) 
+                ->andWhere('T.deletedAt IS NULL')      
+                ->getQuery()
+                ->getSingleResult();     
+        } catch (\Exception $ex) {
+            throw new \InvalidArgumentException(
+                    'El usuario '.$username.' no existe o esta deshabilitado');
+        }
+    }     
 }
