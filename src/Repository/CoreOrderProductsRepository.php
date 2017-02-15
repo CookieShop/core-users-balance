@@ -26,7 +26,7 @@ class CoreOrderProductsRepository extends EntityRepository
             function ($em) use($userId,$currentRepo) {
                 return $currentRepo
                         ->createQueryBuilder('U')
-                        ->select('COUNT(U.id) as countProduct,'.
+                        ->select('SUM(U.quantity) as countProduct,'.
                                 'A.createdAt,A.description,A.fileName,'.
                                 'A.id,A.modifiedAt,A.name,A.sort')
                         ->innerJoin('U.order', 'R')
